@@ -36,13 +36,13 @@ public class Canvas extends JPanel implements ModelListener {
 		setPreferredSize(getMinimumSize());
 		setBackground(Color.WHITE);
 		this.board = board;
-		
+
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				selectShape(e.getPoint());
 			}
 		});
-		
+
 		addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
 				if (board.getMode() != Whiteboard.CLIENT) {
@@ -50,12 +50,12 @@ public class Canvas extends JPanel implements ModelListener {
 					int dy = e.getY() - lastY;
 					lastX = e.getX();
 					lastY = e.getY();
-					
+
 					if (movingPoint != null) {
 						movingPoint.x += dx;
 						movingPoint.y += dy;
 						getSelected().doResize(anchorPoint, movingPoint);
-						
+
 					} else if (hasSelected()) {
 						getSelected().doMove(dx, dy);
 					}
@@ -63,7 +63,7 @@ public class Canvas extends JPanel implements ModelListener {
 			}
 		});
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -71,13 +71,13 @@ public class Canvas extends JPanel implements ModelListener {
 			shape.draw(g, selected == shape);
 		}
 	}
-	
+
 	public void addShape(DShapeModel model) {
 		if (board.getMode() != Whiteboard.CLIENT) {
 			model.setId(board.getCurrentId());
 			//maybe need to reconsider
 		}
-		
+
 		DShape shape;
 		if (model instanceof DRectModel) {
 			shape = new DRect(model, this);
@@ -100,13 +100,13 @@ public class Canvas extends JPanel implements ModelListener {
 		model.addListener(this);
 		board.getTableModel().addModel(model);
 		repaint();
-		
+
 		if (board.getMode() == Whiteboard.SERVER) {
 			System.out.println("sending add msg");
 			board.doSend(Whiteboard.Message.ADD, model);
 		}
 	}
-	
+
 	public void removeShape(DShape shape) {
 		DShapeModel model = shape.getModel();
 		model.doRemoveListener(shape);
@@ -119,13 +119,13 @@ public class Canvas extends JPanel implements ModelListener {
 		if (shape == selected) {
 			selected = null;
 		}
-		
+
 		if (board.getMode() == Whiteboard.SERVER) {
 			board.doSend(Whiteboard.Message.REMOVE, model);
 		}
-		
+
 	}
-	
+
 	public void moveTo(DShape shape, int index) {
 		Collections.swap(shapes, index, shapes.indexOf(shape));
 		board.getTableModel().moveModelTo(shape.getModel(), index);
@@ -134,7 +134,7 @@ public class Canvas extends JPanel implements ModelListener {
 		}
 		repaint();
 	}
-	
+
 	public void save(File file ) {
 		try { 
 			XMLEncoder xmlOut = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(file))); 
@@ -146,16 +146,16 @@ public class Canvas extends JPanel implements ModelListener {
 			e.printStackTrace(); 
 		} 
 	}
-	
+
 	public void open(File file) {
 		DShapeModel[] modelArray = null;
 		try {
 			clearCanvas();
-			
+
 			XMLDecoder xmlIn = new XMLDecoder(new BufferedInputStream(new FileInputStream(file)));
 			modelArray = (DShapeModel[]) xmlIn.readObject();
 			xmlIn.close();
-			
+
 			for (DShapeModel model: modelArray) {
 				addShape(model);
 			}
@@ -164,33 +164,33 @@ public class Canvas extends JPanel implements ModelListener {
 			e.printStackTrace(); 
 		} 
 	}
-	
+
 	public void saveIamge(File file) {
 		DShape selectedShape = selected;
 		selected = null;
-        BufferedImage image = (BufferedImage) createImage(getWidth(), getHeight());
-        Graphics g = image.getGraphics();
-        paintAll(g);
-        g.dispose();
-        try {
-            javax.imageio.ImageIO.write(image, "PNG", file);
-            selected = selectedShape;
-        } catch (IOException ex) {
-        	ex.printStackTrace(); 
-        }
+		BufferedImage image = (BufferedImage) createImage(getWidth(), getHeight());
+		Graphics g = image.getGraphics();
+		paintAll(g);
+		g.dispose();
+		try {
+			javax.imageio.ImageIO.write(image, "PNG", file);
+			selected = selectedShape;
+		} catch (IOException ex) {
+			ex.printStackTrace(); 
+		}
 	}
-	
+
 	public void clearCanvas() {
 		List<DShape> shapesCopy = new ArrayList<DShape>(shapes);
 		for (DShape shape: shapesCopy) {
 			removeShape(shape);
 		}
 	}
-	
+
 	public int getShapesSize() {
 		return shapes.size();
 	}
-	
+
 	public List<DShape> getShapes() {
 		return shapes;
 	}
@@ -200,23 +200,23 @@ public class Canvas extends JPanel implements ModelListener {
 			board.doSend(Whiteboard.Message.CHANGE, model);
 		}
 	}
-	
+
 	public DShape getSelected() {
 		return selected;
 	}
-	
+
 	public boolean hasSelected() {
 		return selected != null;
 	}
-	
+
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
-	
+
 	public boolean getDirty() {
 		return dirty;
 	}
-	
+
 	public DShape getShapeById(int id) {
 		DShape shape = null;
 		for (DShape s: shapes) {
@@ -225,16 +225,16 @@ public class Canvas extends JPanel implements ModelListener {
 				break;
 			}
 		}
-		
+
 		return shape;
 	}
-	
+
 	private void selectShape(Point point) {
 		lastX = point.x;
 		lastY = point.y;
 		movingPoint = null;
 		anchorPoint = null;
-		
+
 		if (hasSelected()) {
 			int i = 0;
 			for (Point knobCenter: selected.getKnobs()) {
@@ -252,7 +252,7 @@ public class Canvas extends JPanel implements ModelListener {
 				i++;
 			}
 		}
-		
+
 		if (movingPoint == null) {
 			for (DShape shape: shapes) {
 				if (shape.containsPoint(point)) {
@@ -267,7 +267,7 @@ public class Canvas extends JPanel implements ModelListener {
 				}
 			}
 		}
-		
+
 		repaint();
 	}
 }

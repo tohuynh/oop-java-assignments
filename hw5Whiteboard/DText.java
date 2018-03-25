@@ -44,12 +44,12 @@ public class DText extends DShape implements ModelListener {
 		canvas.repaint(getSelectedBounds());
 		((DTextModel)getModel()).setFontName(fontName);
 	}
-	
+
 	public void doResize(Point anchorPoint, Point movingPoint) {
 		heightChanged = true;
 		super.doResize(anchorPoint, movingPoint);
 	}
-	
+
 	private void computeFont(Graphics g) {
 		double size = 1.0;
 		double lastSize = size;
@@ -64,7 +64,7 @@ public class DText extends DShape implements ModelListener {
 		heightChanged = false;
 		font = new Font(((DTextModel) model).getFontName(), Font.PLAIN, (int) lastSize);
 	}
-	
+
 	public void modelChanged(DShapeModel model) {
 		heightChanged = true;
 		super.modelChanged(model);

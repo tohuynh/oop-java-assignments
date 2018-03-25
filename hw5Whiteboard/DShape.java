@@ -9,15 +9,15 @@ import java.util.List;
 public abstract class DShape implements ModelListener {
 	public static final int KNOB_SIZE = 9;
 	public static final Color KNOB_COLOR = Color.BLACK;
-	
+
 	protected DShapeModel model;
 	protected Canvas canvas;
-	
+
 	public DShape(Canvas canvas) {
 		this(new DShapeModel(), canvas);
-		
+
 	}
-	
+
 	public DShape(DShapeModel model, Canvas canvas) {
 		this.model = model;
 		this.canvas = canvas;
@@ -27,28 +27,28 @@ public abstract class DShape implements ModelListener {
 		if (model == this.model) {
 			canvas.repaint(getSelectedBounds());
 		}
-		
+
 	}
-	
+
 	abstract public void draw(Graphics g, boolean selected);
 
 	public boolean containsPoint(Point point) {
 		return getBounds().contains(point);
 	}
-	
+
 	public Rectangle getBounds() {
 		return model.getBounds();
 	}
-	
+
 	public Rectangle getSelectedBounds() {
 		Rectangle bounds = getBounds();
 		return new Rectangle(bounds.x - KNOB_SIZE/2, bounds.y - KNOB_SIZE/2, bounds.width + KNOB_SIZE, bounds.height + KNOB_SIZE);
 	}
-	
+
 	public Color getColor() {
 		return model.getColor();
 	}
-	
+
 	public DShapeModel getModel() {
 		return model;
 	}
@@ -57,13 +57,13 @@ public abstract class DShape implements ModelListener {
 		canvas.repaint(getSelectedBounds());
 		model.moveBy(dx,dy);
 	}
-	
+
 	public void doResize(Point anchorPoint, Point movingPoint) {
 		canvas.repaint(getSelectedBounds());
 		model.resizeBy(anchorPoint, movingPoint);
-		
+
 	}
-	
+
 	public List<Point> getKnobs() {
 		List<Point> knobs = new ArrayList<Point>();
 		Rectangle bounds = getBounds();
@@ -75,7 +75,7 @@ public abstract class DShape implements ModelListener {
 		Collections.swap(knobs, 2, 3);
 		return knobs;
 	}
-	
+
 	protected void drawKnobs(Graphics g) {
 		g.setColor(KNOB_COLOR);
 		for (Point p: getKnobs()) {
